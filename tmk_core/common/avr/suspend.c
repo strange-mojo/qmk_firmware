@@ -19,7 +19,9 @@
     #include "audio.h"
 #endif /* AUDIO_ENABLE */
 
-
+#ifdef RGBLIGHT_ANIMATIONS
+    #include "rgblight.h"
+#endif
 
 #define wdt_intr_enable(value)   \
 __asm__ __volatile__ (  \
@@ -78,6 +80,12 @@ static void power_down(uint8_t wdto)
 	backlight_set(0);
 #endif
 
+#ifdef RGBLIGHT_ANIMATIONS
+    rgblight_timer_disable();
+    _delay_ms(50);
+    rgblight_setrgb(0, 0, 0);
+#endif
+
 	// Turn off LED indicators
 	led_set(0);
 
@@ -130,6 +138,11 @@ void suspend_wakeup_init(void)
     clear_keyboard();
 #ifdef BACKLIGHT_ENABLE
     backlight_init();
+#endif
+#ifdef RGBLIGHT_ANIMATIONS
+    rgblight_timer_enable();
+    _delay_ms(50);
+    rgblight_set();
 #endif
 	led_set(host_keyboard_leds());
 }
